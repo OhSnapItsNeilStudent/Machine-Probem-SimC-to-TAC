@@ -1,0 +1,50 @@
+{
+    "type": "Program",
+    "functions": [
+        {
+            "type": "FunctionDef",
+            "name": "fact",
+            "params": ["n"],
+            "body": [
+                {
+                    "type": "Assignment",
+                    "target": "f",
+                    "value": {"type": "IntConst", "value": 1}
+                },
+                {
+                    "type": "While",
+                    "condition": {
+                        "type": "BinaryOp",
+                        "op": ">",
+                        "left": {"type": "Var", "name": "n"},
+                        "right": {"type": "IntConst", "value": 1}
+                    },
+                    "body": [
+                        {
+                            "type": "Assignment",
+                            "target": "f",
+                            "value": {
+                                "type": "BinaryOp",
+                                "op": "*",
+                                "left": {"type": "Var", "name": "f"},
+                                "right": {"type": "Var", "name": "n"}
+                            }
+                        },
+                        {
+                            "type": "Assignment",
+                            "target": "n",
+                            "value": {
+                                "type": "BinaryOp",
+                                "op": "-",
+                                "left": {"type": "Var", "name": "n"},
+                                "right": {"type": "IntConst", "value": 1}
+                            }
+                        }
+                    ]
+                },
+                {"type": "Return", "value": {"type": "Var", "name": "f"}}
+            ]
+        }
+    ],
+    "statements": []
+}
