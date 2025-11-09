@@ -1,0 +1,22 @@
+// Function to compute the factorial of a number
+fact(n) {
+    f = 1;
+    while (n > 1) {
+        f = f * n;
+        n = n - 1;
+    }
+    return f;
+}
+
+num = iread();
+
+if (num < 0) {
+    print(0); // Error case
+} else {
+    result = fact(num);
+    print(result);
+}
+
+if (result > 100) {
+    print(1);
+}

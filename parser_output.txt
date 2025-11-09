@@ -75,5 +75,87 @@
             ]
         }
     ],
-    "statements": []
+    "statements": [
+        {
+            "type": "Assignment",
+            "target": "num",
+            "value": {
+                "type": "FuncCall",
+                "name": "iread",
+                "args": []
+            }
+        },
+        {
+            "type": "If",
+            "condition": {
+                "type": "BinaryOp",
+                "op": "<",
+                "left": {
+                    "type": "Var",
+                    "name": "num"
+                },
+                "right": {
+                    "type": "IntConst",
+                    "value": 0
+                }
+            },
+            "then": [
+                {
+                    "type": "Print",
+                    "value": {
+                        "type": "IntConst",
+                        "value": 0
+                    }
+                }
+            ],
+            "else": [
+                {
+                    "type": "Assignment",
+                    "target": "result",
+                    "value": {
+                        "type": "FuncCall",
+                        "name": "fact",
+                        "args": [
+                            {
+                                "type": "Var",
+                                "name": "num"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "type": "Print",
+                    "value": {
+                        "type": "Var",
+                        "name": "result"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "If",
+            "condition": {
+                "type": "BinaryOp",
+                "op": ">",
+                "left": {
+                    "type": "Var",
+                    "name": "result"
+                },
+                "right": {
+                    "type": "IntConst",
+                    "value": 100
+                }
+            },
+            "then": [
+                {
+                    "type": "Print",
+                    "value": {
+                        "type": "IntConst",
+                        "value": 1
+                    }
+                }
+            ],
+            "else": []
+        }
+    ]
 }
