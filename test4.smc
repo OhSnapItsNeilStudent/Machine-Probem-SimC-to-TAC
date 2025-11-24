@@ -1,0 +1,10 @@
+// Test 4: Simple function with parameters
+add(a, b) {
+    result = a + b;
+    return result;
+}
+
+x = 15;
+y = 25;
+z = add(x, y);
+print(z);

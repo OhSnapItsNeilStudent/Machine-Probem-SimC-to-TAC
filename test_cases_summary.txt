@@ -1,0 +1,27 @@
+TEST CASE SUMMARY:
+
+test1.smc - Simple arithmetic operations
+test2.smc - If-else conditionals with iread()
+test3.smc - While loop
+test4.smc - Simple function with parameters
+test5.smc - Nested if-else statements
+test6.smc - Multiple functions calling each other
+test7.smc - All relational operators
+test8.smc - Complex expressions with precedence
+test9.smc - Nested while loops
+test10.smc - Comprehensive test with isEven and sumRange functions
+
+USAGE:
+------
+To run any test case:
+  python3 c2tac.py test1.smc
+  python3 c2tac.py test2.smc
+  ... and so on
+
+  output will be:
+  test1.tac
+  test2.tac
+  ...
+
+To run the mandatory test case:
+  python3 c2tac.py prog.smc

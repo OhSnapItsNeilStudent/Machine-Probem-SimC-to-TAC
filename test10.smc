@@ -1,0 +1,33 @@
+// Test 10: Comprehensive test combining multiple features
+isEven(num) {
+    remainder = num % 2;
+    if (remainder == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+sumRange(start, end) {
+    total = 0;
+    i = start;
+    while (i <= end) {
+        total = total + i;
+        i = i + 1;
+    }
+    return total;
+}
+
+x = iread();
+if (x > 0) {
+    check = isEven(x);
+    if (check == 1) {
+        print(100);
+    } else {
+        print(200);
+    }
+    result = sumRange(1, x);
+    print(result);
+} else {
+    print(0);
+}

@@ -1,0 +1,20 @@
+// Test 8: Complex expressions with operator precedence
+x = 5;
+y = 3;
+z = 2;
+
+// Test arithmetic precedence: * and / before + and -
+result1 = x + y * z;
+print(result1);
+
+// Test with parentheses
+result2 = (x + y) * z;
+print(result2);
+
+// Test modulo
+result3 = x % y;
+print(result3);
+
+// Complex expression
+result4 = x * y + z / z - y % z;
+print(result4);

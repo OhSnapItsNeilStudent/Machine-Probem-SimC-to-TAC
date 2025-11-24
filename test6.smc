@@ -1,0 +1,13 @@
+// Test 6: Multiple functions
+multiply(a, b) {
+    return a * b;
+}
+
+square(x) {
+    result = multiply(x, x);
+    return result;
+}
+
+n = iread();
+sq = square(n);
+print(sq);

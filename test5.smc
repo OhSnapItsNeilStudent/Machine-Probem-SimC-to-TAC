@@ -1,0 +1,15 @@
+// Test 5: Nested if-else statements
+num = iread();
+if (num >= 0) {
+    if (num <= 10) {
+        print(1);
+    } else {
+        print(2);
+    }
+} else {
+    if (num >= -10) {
+        print(3);
+    } else {
+        print(4);
+    }
+}
