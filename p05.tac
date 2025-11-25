@@ -8,7 +8,7 @@ print(1)
 ip = 9
 print(2)
 ip = 16
-mem[18] = 0 - 10
+mem[18] = - 10
 mem[19] = mem[17] < mem[18]
 if mem[19]: ip = 15
 print(3)

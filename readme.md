@@ -1,8 +1,16 @@
 # README - SimC to Three-Address Code Translator
 
-### Nics De Vega (211951)
-### Christianneil Emmanuel Ocampo (214293)
-### Jenica Alea Vizmanos (216351)
+### Nics De Vega (ID: 211951)
+### Christianneil Emmanuel Ocampo (ID: 214293)
+### Jenica Alea Vizmanos (ID: 216351)
+
+#### November 25, 2025
+#### CSCI 202 WX2
+
+#### Sources: 
+- https://www.w3schools.com/python/python_regex.asp
+- https://docs.python.org/3/library/re.html
+
 
 ## General Description
 
@@ -32,12 +40,35 @@ The implementation uses standard compiler construction techniques: a DFA-based s
   - `parse_primary()`: Literals, variables, function calls, parenthesized expressions
 - Uses predictive parsing with `peek()` and `match()` operations
 
-### Phase 3: Intermediate Code Generation *(In Progress)*
-- **Symbol Table**: Will track global/local variables, functions, and parameters with memory locations
-- **Memory Model**: Linear array (mem[]) partitioned into TAC instructions, global variables, and stack frames
-- **Register Management**: 16 general-purpose registers (r1-r16) with planned reuse mechanism
-- **Control Flow**: Standard translation using conditional/unconditional jumps with backpatching
-- **Function Calls**: Activation records following calling convention in specification
+### Phase 3: Intermediate Code Generation
+- Converts the AST into Three-Address Code (TAC) instructions suitable for execution using `tsim.py`.
+- **Symbol Table Management**
+  - Tracks **global variables**, **temporary globals**, function **parameters**, and local variables.
+  - Global variables are stored in memory after TAC instructions and referenced via placeholders like `mem[GLOBAL_x]`.
+  - Local variables and function parameters are mapped relative to `bp` (base pointer) for stack-based addressing.
+- **Temporary Storage**
+  - **Functions**: Uses 16 general-purpose registers (`r1`–`r16`) in LIFO order for intermediate results.
+  - **Main program**: Uses memory-based temporary globals for storing intermediate expression results.
+  - Temporaries are allocated and freed systematically to avoid memory/register conflicts.
+- **Expression Handling**
+  - Handles constants, variables, unary/binary operations, and function calls.
+  - Binary operations uses the location of the left operand to store the result. 
+  - Right-hand side constants in binary operations are used inline when possible.
+  - Negation is the only valid unary operation that would create a temporary storage for the result.
+- **Control Flow Translation**
+  - `if` and `while` statements are translated into conditional TAC jumps.
+    - For `if` statements, it's processed such that there's at least 1 valid statement in the THEN block. 
+  - Relational operators (for conditional statements) are inverted to simplify jump logic (`>` → `<=`, `==` → `!=`, etc.). 
+  - Generates labels for ELSE, ENDIF, WHILESTART, WHILEBODY, and ENDWHILE, with proper backpatching.
+- **Function Calls**
+  - Push arguments in **right-to-left order** onto the stack so that it matches the order of paramter mapping where the nearest parameter to `bp` is the leftmost parameter. 
+  - Save return address, jump to function label.
+  - On return, store result in `ac` (accumulator) and clean up stack.
+  - Handles `iread()` separately as a special built-in function.
+- **Backpatching and Finalization**
+  - Labels and `GLOBAL_x` placeholders are resolved to numeric instruction indices or memory addresses after TAC emission.
+  - Global variables are assigned sequential memory addresses immediately following TAC instructions.
+  - Final TAC is written to file with all placeholders replaced by concrete numeric locations.
 
 ---
 
@@ -125,11 +156,48 @@ The implementation uses standard compiler construction techniques: a DFA-based s
 - `_is_function_def()`: Lookahead helper to detect function definitions
 - `_is_func_call()`: Lookahead helper to detect function calls
 
+### 4. IntermediateCodeGenerator Class
+**Purpose**: Generates Three-Address Code (TAC) from the Abstract Syntax Tree (AST) produced by the parser. It handles both the main program and user-defined functions, manages registers, global memory, and control flow.
+
+**Key Attributes**:
+- `ast`: Abstract Syntax Tree (AST) from the parser  
+- `instructions`: List of emitted TAC instructions  
+- `labels`: Maps label names to instruction indices for backpatching  
+- `globals_list` / `globals_map`: Tracks global variable names and their assigned memory indices  
+- `temp_globals` / `free_temp_globals`: Pool of temporary globals for main program expression evaluation  
+- `regs` / `free_regs`: Pool of 16 general-purpose registers for function computations  
+- `label_count`, `return_count`, `global_temp_count`: Counters for generating unique labels and temporary variables  
+- `main_label`: Label marking for the start of the main program  
+
+**Key Methods**:
+- **Emit Instructions**
+  - `emit(code)`: Append a TAC instruction and returns its index  
+  - `emit_label(name)`: Record a label as mapping to the next instruction index
+- **Globals & Temporary Variables**
+  - `add_global(name)`: Register a new global variable  
+  - `get_global_addr(name)`: Get memory placeholder `mem[GLOBAL_{name}]`  
+  - `new_global_temp_addr()`: Allocate a temporary global memory slot  
+  - `free_global_temp(temp)`: Free a temporary global to reuse later on
+- **Register Management**
+  - `alloc_reg()`: Allocate a free register 
+  - `free_reg(r)`: Return a register to the pool, effectively marking it as a free to use register 
+- **Expression Handling**
+  - `expr(e, in_function, params_map, locals_map, target_address='')`: Recursively generate TAC and return memory/register/constants/none for specific expressions. It also includes handling temporary registers and memory allocation.  
+- **Statement Handling**
+  - `invert_op(op)`: Inverts relational operators for generating conditional jumps.  
+  - `stmt(s, in_function, params_map, locals_map)`: Generates TAC for assignments, print statements, if-else blocks, while loops, and return statements.  
+- **Function Processing**
+  - `scan_locals(params, body)`: Identify all local variables that need stack allocation  
+  - `func_body(body, in_function, params_map, locals_map)`: Process statements in a function body  
+  - `func(f)`: Generate TAC for a function, including stack frame setup, local allocation, parameter mapping, and default return handling  
+- **Program Entry & Finalization**
+  - `start_program()`: Processes functions first, then main program statements, and a final `halt` instruction  
+  - `finalize(out_filename)`: Performs backpatching to replace labels and `GLOBAL_` placeholders with numeric memory locations, and writes the final TAC to a `.tac` file  
+
 ---
 
 ## Classes Based from Demo Programs
-- Add here
-
+- We mainly took inspiration from the **CSCI 202 - L10 - Demo.ipynb** in terms of program structure (especially in doing the IntermediateCodeGenerator Class), such as in the order of processing statements or what to consider when a statement is processed. We also used this to understand how to break-down the problem into modular functions that work together to create the TAC.
 
 ### Original Implementations
 - 30-state DFA specifically designed for SimC requirements (complete implementation in `create_scanner_dfa()`)
@@ -172,38 +240,25 @@ The 10 test cases demonstrate:
 
 ### Challenge 1: Managing Lookahead and Pushback in the 30-State DFA  
 **Problem:**  
-Designing the scanner required handling operators that can be one- or two-character tokens  
-(e.g., `=`, `==`, `<`, `<=`, `>`, `>=`, `!`, `!=`, `/`, `//`).  
-Without lookahead, the DFA would prematurely finalize tokens or misinterpret multi-character  
-operators. Implementing this cleanly without breaking the DFA flow was difficult.
+Designing the scanner required handling operators that can be one- or two-character tokens (e.g., `=`, `==`, `<`, `<=`, `>`, `>=`, `!`, `!=`, `/`, `//`). Without lookahead, the DFA would prematurely finalize tokens or misinterpret multi-character operators. Implementing this cleanly without breaking the DFA flow was difficult.
 
 **Solution:**  
-We added *checkpoint states* with a pushback mechanism. When the DFA reaches a checkpoint, it  
-examines the next input character:  
+We added *checkpoint states* with a pushback mechanism. When the DFA reaches a checkpoint, it examines the next input character:  
 - If it forms a valid 2-character operator, the state transitions appropriately.  
 - If not, the scanner pushes the character back and finalizes the 1-character token.  
 
-This produced a robust scanning system where states can safely “peek” into the next character  
-without losing input or creating ambiguous transitions.
+This produced a robust scanning system where states can safely “peek” into the next character without losing input or creating ambiguous transitions.
 
 ### Challenge 2: Differentiating Keywords and Identifiers  
 **Problem:**  
-Identifiers and keywords share the same lexical structure (alphabetic sequences). The scanner's  
-DFA recognized them using the same state, which initially made it difficult to label tokens  
-correctly (e.g., deciding if `while` is the WHILE token or just an identifier).
+Identifiers and keywords share the same lexical structure (alphabetic sequences). The scanner's DFA recognized them using the same state, which initially made it difficult to label tokens correctly (e.g., deciding if `while` is the WHILE token or just an identifier).
 
 **Solution:**  
-All alphabetic sequences were first tokenized as ID tokens. After reaching a final state, the  
-scanner checks the lexeme against a keyword dictionary. If it matches one of the SimC  
-reserved words, the token type is replaced with the correct keyword token (WHILE, IF, PRINT,  
-RETURN, etc.). Otherwise, it remains an ID.  
-This approach keeps the DFA simple while preserving full keyword recognition.
+All alphabetic sequences were first tokenized as ID tokens. After reaching a final state, the scanner checks the lexeme against a keyword dictionary. If it matches one of the SimC  reserved words, the token type is replaced with the correct keyword token (WHILE, IF, PRINT, RETURN, etc.). Otherwise, it remains an ID. This approach keeps the DFA simple while preserving full keyword recognition.
 
 ### Challenge 3: Enforcing Operator Precedence in Recursive Descent  
 **Problem:**  
-Recursive descent parsing becomes complex when operators have multiple layers of precedence  
-(+ vs * vs relational operators). If not designed carefully, the parser may incorrectly  
-associate expressions (e.g., parsing `a + b * c` as `(a + b) * c`).
+Recursive descent parsing becomes complex when operators have multiple layers of precedence (+ vs * vs relational operators). If not designed carefully, the parser may incorrectly associate expressions (e.g., parsing `a + b * c` as `(a + b) * c`).
 
 **Solution:**  
 We implemented a structured precedence hierarchy:
@@ -214,49 +269,50 @@ We implemented a structured precedence hierarchy:
 - `parse_primary()`
 
 Each level calls the next lower-precedence function.  
-This ensured correct left associativity and strict operator precedence following the SimC  
-grammar, producing accurate AST structures for the code generator.
+This ensured correct left associativity and strict operator precedence following the SimC grammar, producing accurate AST structures for the code generator.
 
 ### Challenge 4: Detecting Function Calls vs Variable References  
 **Problem:**  
 When parsing an identifier, the parser must decide whether it is:  
 - A plain variable (`x`)  
 - A function call (`x(a, b)`)  
+
 But lookahead is required because both begin with an identifier.
 
 **Solution:**  
-We implemented a lookahead helper `_is_func_call()`, which checks if the next token  
-after an ID is a left parenthesis.  
-If yes → parse as a function call.  
-If no → parse as a variable.  
+We implemented a lookahead helper `_is_func_call()`, which checks if the next token after an ID is a left parenthesis.  
+- If yes → parse as a function call.  
+- If no → parse as a variable.
 
 This eliminated ambiguity without requiring token backtracking.
 
-### Challenge 5: Coordinating Scanner–Parser–Codegen Interaction  
+### Challenge 5: Allocating and De-allocating Temporary Storage (registers and global variables)
 **Problem:**  
-Although the scanner, parser, and code generator were implemented as separate components,  
-they must behave as a unified pipeline. Early on, small inconsistencies caused major failures:  
+We struggled with identifying the underlying rules for when to allocate and de-allocate temporary storage such as the registers and temporary variables, and initially understanding on when to use registers or temporary variables.
+
+**Solution:**  
+We set a common rule, following the sample output, where registers are only used inside functions, and temporary variables are used in the main program. 
+
+Then, we looked at the patterns wherein we found that binary operations in expressions generally use the left operand as the location of the result of the operation. We standardized this so that we don't need to always allocate temporary storage for the results of binary operations. We also optimized the code so that the righ operands do not needlessly consume temporary storage if they are just integers or are already allocated to a temporary storage. 
+
+For the conditional statements in `if` statement and `while` loop, we always allocate new temporary variable or register (depending on where it's located) to store the result of the boolean expression. We then de-allocate those immediately after setting the condition for jumping instructions. In this way, the registers or temporary variables could be used again in the subsequent instructions. 
+
+### Challenge 6: Coordinating Scanner–Parser–Codegen Interaction  
+**Problem:**  
+Although the scanner, parser, and code generator were implemented as separate components, they must behave as a unified pipeline. Early on, small inconsistencies caused major failures:  
 - Scanner token types didn’t always match what the parser expected  
 - Line numbering inconsistencies made debugging syntax errors hard  
 - Lookahead semantics (checkpoint and pushback states) sometimes produced unexpected tokens  
 - AST nodes varied in structure, making the code generator unable to rely on consistent fields  
 
-These mismatches caused the parser to reject valid input, skip tokens, or enter infinite loops,  
-and the code generator could not reliably map AST nodes to TAC instructions.
+These mismatches caused the parser to reject valid input, skip tokens, or enter infinite loops, and the code generator could not reliably map AST nodes to TAC instructions.
 
 **Solution:**  
-We standardized token naming, keyword mapping, and delimiter recognition in the scanner so the  
-parser always receives a clean, predictable token stream. The parser’s `peek()`, `advance()`,  
-and `match()` logic was adjusted to gracefully handle EOF tokens, invalid sequences, and  
-lookahead-driven decisions (e.g., distinguishing identifiers vs. function calls).  
-Finally, the AST structure was normalized across all construct types—expressions, statements,  
-function definitions—allowing the intermediate code generator to traverse the AST without  
-special-case handling.  
+We standardized token naming, keyword mapping, and delimiter recognition in the scanner so the parser always receives a clean, predictable token stream. The parser’s `peek()`, `advance()`, and `match()` logic was adjusted to gracefully handle EOF tokens, invalid sequences, and lookahead-driven decisions (e.g., distinguishing identifiers vs. function calls).  
 
-By aligning all three components—Scanner → Parser → Code Generator—we achieved a stable and  
-cohesive pipeline where each phase produces output in exactly the format expected by the next.
+Finally, the AST structure was normalized across all construct types—expressions, statements, function definitions—allowing the intermediate code generator to traverse the AST without special-case handling.  
 
-
+By aligning all three components—Scanner → Parser → Code Generator—we achieved a stable and cohesive pipeline where each phase produces output in exactly the format expected by the next.
 
 ---
 

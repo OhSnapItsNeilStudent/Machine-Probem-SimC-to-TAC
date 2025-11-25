@@ -4,8 +4,8 @@ SimC Intermediate Code Generator (ICG)
 ===========================================================
 
 This intermediate code generator takes an Abstract Syntax 
-Tree (AST), in the form of a json file, and produces the 
-corresponding Three-Address Code (TAC) instructions.
+Tree (AST), which is formatted like a JSON file, and produces 
+the corresponding Three-Address Code (TAC) instructions.
 
 '''
 
@@ -217,6 +217,19 @@ class IntermediateCodeGenerator:
             # The caller is responsible for freeing the resulting register or temp global when appropriate.
             return left_reg
         
+        # For UnaryOp
+        if e_type == 'UnaryOp':
+            op = e['op']
+            operand = self.expr(e['operand'], in_function, params_map, locals_map)
+
+            # Only - sign is considered a valid unary operator
+            if op == '-': 
+                r = self.new_temp(in_function)
+                self.emit(f'{r} = {op} {operand}')
+                return r
+            else:
+                raise Exception('Unknown unary operator: ' + op)
+
         # For function calls
         if e_type == 'FuncCall':
             # iread case
@@ -226,14 +239,16 @@ class IntermediateCodeGenerator:
                 return r
             
             # Otherwise, 
-            #   push args from left-to-right, push return address, 
-            #   go to function (ip = func_label)
+            #   push args from right-to-left (so that the leftmost arg will 
+            #   be at position bp+2, following the parameters mapping), 
+            #   push return address, go to function (ip = func_label)
             else:
                 # Setup arguments
-                for args in e.get('args', []):
-                    op = self.expr(args, in_function, params_map, locals_map)
-                    self.emit('sp = sp - 1')
-                    self.emit(f'mem[sp] = {op}')
+                args_list = e.get('args', [])
+                for arg in reversed(args_list):
+                    op = self.expr(arg, in_function, params_map, locals_map)
+                    self.emit("sp = sp - 1")
+                    self.emit(f"mem[sp] = {op}")
                     if op.startswith('r') or op in self.temp_globals:
                         self.free_temp(in_function, op)
                 
