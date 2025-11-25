@@ -1,80 +1,6 @@
 {
     "type": "Program",
-    "functions": [
-        {
-            "type": "FunctionDef",
-            "name": "fact",
-            "params": [
-                "n"
-            ],
-            "body": [
-                {
-                    "type": "Assignment",
-                    "target": "f",
-                    "value": {
-                        "type": "IntConst",
-                        "value": 1
-                    }
-                },
-                {
-                    "type": "While",
-                    "condition": {
-                        "type": "BinaryOp",
-                        "op": ">",
-                        "left": {
-                            "type": "Var",
-                            "name": "n"
-                        },
-                        "right": {
-                            "type": "IntConst",
-                            "value": 1
-                        }
-                    },
-                    "body": [
-                        {
-                            "type": "Assignment",
-                            "target": "f",
-                            "value": {
-                                "type": "BinaryOp",
-                                "op": "*",
-                                "left": {
-                                    "type": "Var",
-                                    "name": "f"
-                                },
-                                "right": {
-                                    "type": "Var",
-                                    "name": "n"
-                                }
-                            }
-                        },
-                        {
-                            "type": "Assignment",
-                            "target": "n",
-                            "value": {
-                                "type": "BinaryOp",
-                                "op": "-",
-                                "left": {
-                                    "type": "Var",
-                                    "name": "n"
-                                },
-                                "right": {
-                                    "type": "IntConst",
-                                    "value": 1
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "Return",
-                    "value": {
-                        "type": "Var",
-                        "name": "f"
-                    }
-                }
-            ]
-        }
-    ],
+    "functions": [],
     "statements": [
         {
             "type": "Assignment",
@@ -89,7 +15,7 @@
             "type": "If",
             "condition": {
                 "type": "BinaryOp",
-                "op": "<",
+                "op": ">=",
                 "left": {
                     "type": "Var",
                     "name": "num"
@@ -101,61 +27,78 @@
             },
             "then": [
                 {
-                    "type": "Print",
-                    "value": {
-                        "type": "IntConst",
-                        "value": 0
-                    }
+                    "type": "If",
+                    "condition": {
+                        "type": "BinaryOp",
+                        "op": "<=",
+                        "left": {
+                            "type": "Var",
+                            "name": "num"
+                        },
+                        "right": {
+                            "type": "IntConst",
+                            "value": 10
+                        }
+                    },
+                    "then": [
+                        {
+                            "type": "Print",
+                            "value": {
+                                "type": "IntConst",
+                                "value": 1
+                            }
+                        }
+                    ],
+                    "else": [
+                        {
+                            "type": "Print",
+                            "value": {
+                                "type": "IntConst",
+                                "value": 2
+                            }
+                        }
+                    ]
                 }
             ],
             "else": [
                 {
-                    "type": "Assignment",
-                    "target": "result",
-                    "value": {
-                        "type": "FuncCall",
-                        "name": "fact",
-                        "args": [
-                            {
-                                "type": "Var",
-                                "name": "num"
+                    "type": "If",
+                    "condition": {
+                        "type": "BinaryOp",
+                        "op": ">=",
+                        "left": {
+                            "type": "Var",
+                            "name": "num"
+                        },
+                        "right": {
+                            "type": "UnaryOp",
+                            "op": "-",
+                            "operand": {
+                                "type": "IntConst",
+                                "value": 10
                             }
-                        ]
-                    }
-                },
-                {
-                    "type": "Print",
-                    "value": {
-                        "type": "Var",
-                        "name": "result"
-                    }
+                        }
+                    },
+                    "then": [
+                        {
+                            "type": "Print",
+                            "value": {
+                                "type": "IntConst",
+                                "value": 3
+                            }
+                        }
+                    ],
+                    "else": [
+                        {
+                            "type": "Print",
+                            "value": {
+                                "type": "IntConst",
+                                "value": 4
+                            }
+                        }
+                    ]
                 }
             ]
-        },
-        {
-            "type": "If",
-            "condition": {
-                "type": "BinaryOp",
-                "op": ">",
-                "left": {
-                    "type": "Var",
-                    "name": "result"
-                },
-                "right": {
-                    "type": "IntConst",
-                    "value": 100
-                }
-            },
-            "then": [
-                {
-                    "type": "Print",
-                    "value": {
-                        "type": "IntConst",
-                        "value": 1
-                    }
-                }
-            ],
-            "else": []
         }
     ]
 }

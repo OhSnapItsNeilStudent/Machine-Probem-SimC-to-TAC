@@ -232,7 +232,11 @@ class Parser:
     def parse_primary(self):
         '''Parse literals, identifiers, or parenthesized sub-expressions.'''
         tok = self.peek()
-        if tok['type'] == 'INT':
+        if tok['type'] == 'MINUS':
+            self.advance()
+            operand = self.parse_primary()
+            return {'type': 'UnaryOp', 'op': '-', 'operand': operand}
+        elif tok['type'] == 'INT':
             self.advance()
             return {'type': 'IntConst', 'value': int(tok['value'])}
         elif tok['type'] == 'ID':
