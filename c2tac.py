@@ -830,20 +830,19 @@ class IntermediateCodeGenerator:
             # The caller is responsible for freeing the resulting register or temp global when appropriate.
             return left_reg
         
-        # PADOUBLE CHECK JENICA
+        # For UnaryOp
         if e_type == 'UnaryOp':
             op = e['op']
             operand = self.expr(e['operand'], in_function, params_map, locals_map)
 
-            if op == '-':
-                t = self.new_temp(in_function)        # <-- FIX
-                self.emit(f"{t} = 0 - {operand}")
-                return t
-
+            # Only - sign is considered a valid unary operator
+            if op == '-': 
+                r = self.new_temp(in_function)
+                self.emit(f'{r} = {op} {operand}')
+                return r
             else:
-                raise Exception("Unknown unary operator: " + op)
+                raise Exception('Unknown unary operator: ' + op)
 
-        
         # For function calls
         if e_type == 'FuncCall':
             # iread case
