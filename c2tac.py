@@ -852,10 +852,10 @@ class IntermediateCodeGenerator:
                 return r
             
             # Otherwise, 
-            #   push args from left-to-right, push return address, 
-            #   go to function (ip = func_label)
+            #   push args from right-to-left (so that the leftmost arg will 
+            #   be at position bp+2, following the parameters mapping), 
+            #   push return address, go to function (ip = func_label)
             else:
-                # JENICA PACHECK DIN TO
                 # Setup arguments
                 args_list = e.get('args', [])
                 for arg in reversed(args_list):
