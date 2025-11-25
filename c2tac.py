@@ -594,7 +594,11 @@ class Parser:
     def parse_primary(self):
         '''Parse literals, identifiers, or parenthesized sub-expressions.'''
         tok = self.peek()
-        if tok['type'] == 'INT':
+        if tok['type'] == 'MINUS':
+            self.advance()
+            operand = self.parse_primary()
+            return {'type': 'UnaryOp', 'op': '-', 'operand': operand}
+        elif tok['type'] == 'INT':
             self.advance()
             return {'type': 'IntConst', 'value': int(tok['value'])}
         elif tok['type'] == 'ID':
@@ -825,6 +829,20 @@ class IntermediateCodeGenerator:
             # Return the left register (or temp global) that holds the result
             # The caller is responsible for freeing the resulting register or temp global when appropriate.
             return left_reg
+        
+        # PADOUBLE CHECK JENICA
+        if e_type == 'UnaryOp':
+            op = e['op']
+            operand = self.expr(e['operand'], in_function, params_map, locals_map)
+
+            if op == '-':
+                t = self.new_temp(in_function)        # <-- FIX
+                self.emit(f"{t} = 0 - {operand}")
+                return t
+
+            else:
+                raise Exception("Unknown unary operator: " + op)
+
         
         # For function calls
         if e_type == 'FuncCall':

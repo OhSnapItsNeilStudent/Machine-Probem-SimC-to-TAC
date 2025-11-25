@@ -1,63 +1,242 @@
 [
-    { "type": "ID", "value": "num" },
-    { "type": "ASSIGN", "value": "=" },
-    { "type": "IREAD", "value": "iread" },
-    { "type": "LPAREN", "value": "(" },
-    { "type": "RPAREN", "value": ")" },
-    { "type": "SEMI", "value": ";" },
-    { "type": "IF", "value": "if" },
-    { "type": "LPAREN", "value": "(" },
-    { "type": "ID", "value": "num" },
-    { "type": "GE", "value": ">=" },
-    { "type": "INT", "value": "0" },
-    { "type": "RPAREN", "value": ")" },
-    { "type": "LBRACE", "value": "{" },
-    { "type": "IF", "value": "if" },
-    { "type": "LPAREN", "value": "(" },
-    { "type": "ID", "value": "num" },
-    { "type": "LE", "value": "<=" },
-    { "type": "INT", "value": "10" },
-    { "type": "RPAREN", "value": ")" },
-    { "type": "LBRACE", "value": "{" },
-    { "type": "PRINT", "value": "print" },
-    { "type": "LPAREN", "value": "(" },
-    { "type": "INT", "value": "1" },
-    { "type": "RPAREN", "value": ")" },
-    { "type": "SEMI", "value": ";" },
-    { "type": "RBRACE", "value": "}" },
-    { "type": "ELSE", "value": "else" },
-    { "type": "LBRACE", "value": "{" },
-    { "type": "PRINT", "value": "print" },
-    { "type": "LPAREN", "value": "(" },
-    { "type": "INT", "value": "2" },
-    { "type": "RPAREN", "value": ")" },
-    { "type": "SEMI", "value": ";" },
-    { "type": "RBRACE", "value": "}" },
-    { "type": "RBRACE", "value": "}" },
-    { "type": "ELSE", "value": "else" },
-    { "type": "LBRACE", "value": "{" },
-    { "type": "IF", "value": "if" },
-    { "type": "LPAREN", "value": "(" },
-    { "type": "ID", "value": "num" },
-    { "type": "GE", "value": ">=" },
-    { "type": "MINUS", "value": "-" },
-    { "type": "INT", "value": "10" },
-    { "type": "RPAREN", "value": ")" },
-    { "type": "LBRACE", "value": "{" },
-    { "type": "PRINT", "value": "print" },
-    { "type": "LPAREN", "value": "(" },
-    { "type": "INT", "value": "3" },
-    { "type": "RPAREN", "value": ")" },
-    { "type": "SEMI", "value": ";" },
-    { "type": "RBRACE", "value": "}" },
-    { "type": "ELSE", "value": "else" },
-    { "type": "LBRACE", "value": "{" },
-    { "type": "PRINT", "value": "print" },
-    { "type": "LPAREN", "value": "(" },
-    { "type": "INT", "value": "4" },
-    { "type": "RPAREN", "value": ")" },
-    { "type": "SEMI", "value": ";" },
-    { "type": "RBRACE", "value": "}" },
-    { "type": "RBRACE", "value": "}" },
-    { "type": "EOF", "value": "" }
+    {
+        "type": "ID",
+        "value": "num"
+    },
+    {
+        "type": "ASSIGN",
+        "value": "="
+    },
+    {
+        "type": "IREAD",
+        "value": "iread"
+    },
+    {
+        "type": "LPAREN",
+        "value": "("
+    },
+    {
+        "type": "RPAREN",
+        "value": ")"
+    },
+    {
+        "type": "SEMI",
+        "value": ";"
+    },
+    {
+        "type": "IF",
+        "value": "if"
+    },
+    {
+        "type": "LPAREN",
+        "value": "("
+    },
+    {
+        "type": "ID",
+        "value": "num"
+    },
+    {
+        "type": "GE",
+        "value": ">="
+    },
+    {
+        "type": "INT",
+        "value": "0"
+    },
+    {
+        "type": "RPAREN",
+        "value": ")"
+    },
+    {
+        "type": "LBRACE",
+        "value": "{"
+    },
+    {
+        "type": "IF",
+        "value": "if"
+    },
+    {
+        "type": "LPAREN",
+        "value": "("
+    },
+    {
+        "type": "ID",
+        "value": "num"
+    },
+    {
+        "type": "LE",
+        "value": "<="
+    },
+    {
+        "type": "INT",
+        "value": "10"
+    },
+    {
+        "type": "RPAREN",
+        "value": ")"
+    },
+    {
+        "type": "LBRACE",
+        "value": "{"
+    },
+    {
+        "type": "PRINT",
+        "value": "print"
+    },
+    {
+        "type": "LPAREN",
+        "value": "("
+    },
+    {
+        "type": "INT",
+        "value": "1"
+    },
+    {
+        "type": "RPAREN",
+        "value": ")"
+    },
+    {
+        "type": "SEMI",
+        "value": ";"
+    },
+    {
+        "type": "RBRACE",
+        "value": "}"
+    },
+    {
+        "type": "ELSE",
+        "value": "else"
+    },
+    {
+        "type": "LBRACE",
+        "value": "{"
+    },
+    {
+        "type": "PRINT",
+        "value": "print"
+    },
+    {
+        "type": "LPAREN",
+        "value": "("
+    },
+    {
+        "type": "INT",
+        "value": "2"
+    },
+    {
+        "type": "RPAREN",
+        "value": ")"
+    },
+    {
+        "type": "SEMI",
+        "value": ";"
+    },
+    {
+        "type": "RBRACE",
+        "value": "}"
+    },
+    {
+        "type": "RBRACE",
+        "value": "}"
+    },
+    {
+        "type": "ELSE",
+        "value": "else"
+    },
+    {
+        "type": "LBRACE",
+        "value": "{"
+    },
+    {
+        "type": "IF",
+        "value": "if"
+    },
+    {
+        "type": "LPAREN",
+        "value": "("
+    },
+    {
+        "type": "ID",
+        "value": "num"
+    },
+    {
+        "type": "GE",
+        "value": ">="
+    },
+    {
+        "type": "MINUS",
+        "value": "-"
+    },
+    {
+        "type": "INT",
+        "value": "10"
+    },
+    {
+        "type": "RPAREN",
+        "value": ")"
+    },
+    {
+        "type": "LBRACE",
+        "value": "{"
+    },
+    {
+        "type": "PRINT",
+        "value": "print"
+    },
+    {
+        "type": "LPAREN",
+        "value": "("
+    },
+    {
+        "type": "INT",
+        "value": "3"
+    },
+    {
+        "type": "RPAREN",
+        "value": ")"
+    },
+    {
+        "type": "SEMI",
+        "value": ";"
+    },
+    {
+        "type": "RBRACE",
+        "value": "}"
+    },
+    {
+        "type": "ELSE",
+        "value": "else"
+    },
+    {
+        "type": "LBRACE",
+        "value": "{"
+    },
+    {
+        "type": "PRINT",
+        "value": "print"
+    },
+    {
+        "type": "LPAREN",
+        "value": "("
+    },
+    {
+        "type": "INT",
+        "value": "4"
+    },
+    {
+        "type": "RPAREN",
+        "value": ")"
+    },
+    {
+        "type": "SEMI",
+        "value": ";"
+    },
+    {
+        "type": "RBRACE",
+        "value": "}"
+    },
+    {
+        "type": "RBRACE",
+        "value": "}"
+    }
 ]

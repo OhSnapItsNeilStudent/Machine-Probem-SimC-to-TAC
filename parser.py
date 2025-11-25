@@ -203,7 +203,7 @@ class Parser:
         return self.parse_relational()
 
     def parse_relational(self):
-        '''Parse relational operations (>, <, >=, <=, ==, !=).'''
+        """Parse relational operations (>, <, >=, <=, ==, !=)."""
         left = self.parse_term()
         while self.peek()['type'] in ('LT', 'GT', 'LE', 'GE', 'EQ', 'NE'):
             op = self.advance()['value']
@@ -215,7 +215,8 @@ class Parser:
         '''Parse addition and subtraction expressions.'''
         left = self.parse_factor()
         while self.peek()['type'] in ('PLUS', 'MINUS'):
-            op = self.advance()['value']
+            op_tok = self.advance()
+            op = op_tok['value']
             right = self.parse_factor()
             left = {'type': 'BinaryOp', 'op': op, 'left': left, 'right': right}
         return left
@@ -224,7 +225,8 @@ class Parser:
         '''Parse multiplication, division, and modulo operations.'''
         left = self.parse_primary()
         while self.peek()['type'] in ('MUL', 'DIV', 'MOD'):
-            op = self.advance()['value']
+            op_tok = self.advance()
+            op = op_tok['value']
             right = self.parse_primary()
             left = {'type': 'BinaryOp', 'op': op, 'left': left, 'right': right}
         return left
@@ -249,4 +251,4 @@ class Parser:
             self.match('RPAREN')
             return expr
         else:
-            raise ParserError(f"Unexpected token in expression: {tok}")
+            raise ParserError(f"Unexpected token in expression at pos {self.pos}: {tok}")
