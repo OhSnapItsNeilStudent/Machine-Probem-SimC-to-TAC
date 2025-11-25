@@ -3,7 +3,6 @@
 ### Nics De Vega (211951)
 ### Christianneil Emmanuel Ocampo (214293)
 ### Jenica Alea Vizmanos (216351)
-# README - SimC to Three-Address Code Translator
 
 ## General Description
 
