@@ -170,10 +170,93 @@ The 10 test cases demonstrate:
 
 ## Challenges Encountered and Solutions
 
-### Challenge 1: <Name>
-**Problem**: Insert Problem
+### Challenge 1: Managing Lookahead and Pushback in the 30-State DFA  
+**Problem:**  
+Designing the scanner required handling operators that can be one- or two-character tokens  
+(e.g., `=`, `==`, `<`, `<=`, `>`, `>=`, `!`, `!=`, `/`, `//`).  
+Without lookahead, the DFA would prematurely finalize tokens or misinterpret multi-character  
+operators. Implementing this cleanly without breaking the DFA flow was difficult.
 
-**Solution**: Insert Solution
+**Solution:**  
+We added *checkpoint states* with a pushback mechanism. When the DFA reaches a checkpoint, it  
+examines the next input character:  
+- If it forms a valid 2-character operator, the state transitions appropriately.  
+- If not, the scanner pushes the character back and finalizes the 1-character token.  
+
+This produced a robust scanning system where states can safely “peek” into the next character  
+without losing input or creating ambiguous transitions.
+
+### Challenge 2: Differentiating Keywords and Identifiers  
+**Problem:**  
+Identifiers and keywords share the same lexical structure (alphabetic sequences). The scanner's  
+DFA recognized them using the same state, which initially made it difficult to label tokens  
+correctly (e.g., deciding if `while` is the WHILE token or just an identifier).
+
+**Solution:**  
+All alphabetic sequences were first tokenized as ID tokens. After reaching a final state, the  
+scanner checks the lexeme against a keyword dictionary. If it matches one of the SimC  
+reserved words, the token type is replaced with the correct keyword token (WHILE, IF, PRINT,  
+RETURN, etc.). Otherwise, it remains an ID.  
+This approach keeps the DFA simple while preserving full keyword recognition.
+
+### Challenge 3: Enforcing Operator Precedence in Recursive Descent  
+**Problem:**  
+Recursive descent parsing becomes complex when operators have multiple layers of precedence  
+(+ vs * vs relational operators). If not designed carefully, the parser may incorrectly  
+associate expressions (e.g., parsing `a + b * c` as `(a + b) * c`).
+
+**Solution:**  
+We implemented a structured precedence hierarchy:
+
+- `parse_relational()`  
+- `parse_term()`  
+- `parse_factor()`  
+- `parse_primary()`
+
+Each level calls the next lower-precedence function.  
+This ensured correct left associativity and strict operator precedence following the SimC  
+grammar, producing accurate AST structures for the code generator.
+
+### Challenge 4: Detecting Function Calls vs Variable References  
+**Problem:**  
+When parsing an identifier, the parser must decide whether it is:  
+- A plain variable (`x`)  
+- A function call (`x(a, b)`)  
+But lookahead is required because both begin with an identifier.
+
+**Solution:**  
+We implemented a lookahead helper `_is_func_call()`, which checks if the next token  
+after an ID is a left parenthesis.  
+If yes → parse as a function call.  
+If no → parse as a variable.  
+
+This eliminated ambiguity without requiring token backtracking.
+
+### Challenge 5: Coordinating Scanner–Parser–Codegen Interaction  
+**Problem:**  
+Although the scanner, parser, and code generator were implemented as separate components,  
+they must behave as a unified pipeline. Early on, small inconsistencies caused major failures:  
+- Scanner token types didn’t always match what the parser expected  
+- Line numbering inconsistencies made debugging syntax errors hard  
+- Lookahead semantics (checkpoint and pushback states) sometimes produced unexpected tokens  
+- AST nodes varied in structure, making the code generator unable to rely on consistent fields  
+
+These mismatches caused the parser to reject valid input, skip tokens, or enter infinite loops,  
+and the code generator could not reliably map AST nodes to TAC instructions.
+
+**Solution:**  
+We standardized token naming, keyword mapping, and delimiter recognition in the scanner so the  
+parser always receives a clean, predictable token stream. The parser’s `peek()`, `advance()`,  
+and `match()` logic was adjusted to gracefully handle EOF tokens, invalid sequences, and  
+lookahead-driven decisions (e.g., distinguishing identifiers vs. function calls).  
+Finally, the AST structure was normalized across all construct types—expressions, statements,  
+function definitions—allowing the intermediate code generator to traverse the AST without  
+special-case handling.  
+
+By aligning all three components—Scanner → Parser → Code Generator—we achieved a stable and  
+cohesive pipeline where each phase produces output in exactly the format expected by the next.
+
+
 
 ---
 
