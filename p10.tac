@@ -61,9 +61,9 @@ print(100)
 ip = 62
 print(200)
 sp = sp - 1
-mem[sp] = 1
-sp = sp - 1
 mem[sp] = mem[75]
+sp = sp - 1
+mem[sp] = 1
 sp = sp - 1
 mem[sp] = 69
 ip = 26

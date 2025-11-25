@@ -856,11 +856,13 @@ class IntermediateCodeGenerator:
             #   push args from left-to-right, push return address, 
             #   go to function (ip = func_label)
             else:
+                # JENICA PACHECK DIN TO
                 # Setup arguments
-                for args in e.get('args', []):
-                    op = self.expr(args, in_function, params_map, locals_map)
-                    self.emit('sp = sp - 1')
-                    self.emit(f'mem[sp] = {op}')
+                args_list = e.get('args', [])
+                for arg in reversed(args_list):
+                    op = self.expr(arg, in_function, params_map, locals_map)
+                    self.emit("sp = sp - 1")
+                    self.emit(f"mem[sp] = {op}")
                     if op.startswith('r') or op in self.temp_globals:
                         self.free_temp(in_function, op)
                 
