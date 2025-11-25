@@ -155,16 +155,16 @@ The implementation uses standard compiler construction techniques: a DFA-based s
 
 ### Test Case Coverage
 The 10 test cases demonstrate:
-- test1.smc - Simple arithmetic operations
-- test2.smc - If-else conditionals with iread()
-- test3.smc - While loop
-- test4.smc - Simple function with parameters
-- test5.smc - Nested if-else statements
-- test6.smc - Multiple functions calling each other
-- test7.smc - All relational operators
-- test8.smc - Complex expressions with precedence
-- test9.smc - Nested while loops
-- test10.smc - Comprehensive test with isEven and sumRange functions
+- p01.smc - Simple arithmetic operations
+- p02.smc - If-else conditionals with iread()
+- p03.smc - While loop
+- p04.smc - Simple function with parameters
+- p05.smc - Nested if-else statements
+- p06.smc - Multiple functions calling each other
+- p07.smc - All relational operators
+- p08.smc - Complex expressions with precedence
+- p09.smc - Nested while loops
+- p10.smc - Comprehensive test with isEven and sumRange functions
 
 ---
 
